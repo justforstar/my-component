@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import useFetch from 'src/component/TablePage/useFetch'
+import useFetch from './useFetch'
 
 const useTable = (param = {}, fetcher, options = {}, tableOptions = {}) => {
   const { defaultParams = { currentPage: 1, pageSize: 10 }, order = {} } = options
