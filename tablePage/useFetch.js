@@ -17,8 +17,7 @@ const useFetch = (param, fetcher, options) => {
       options.onError && options.onError(error, param)
     }
     setLoading(false)
-  }, [...Object.values(param)])
-
+  }, Object.values(param))
   useEffect(() => {
     request()
   }, Object.values(param))
