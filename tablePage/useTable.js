@@ -6,11 +6,12 @@ const useTable = (param = {}, fetcher, options = {}, tableOptions = {}) => {
   const dispatch = useDispatch()
   const { defaultParams = { currentPage: 1, pageSize: 10 }, order = {} } = options
   const orders = options.orders ? options.orders : [order]
-  const [query, setQuery] = useState(() => ({ currentPage: defaultParams.currentPage, pageSize: defaultParams.pageSize, sort: { orders: orders }, reloadPage: false }))
+  const [query, setQuery] = useState(() => ({ currentPage: defaultParams.currentPage, pageSize: defaultParams.pageSize, sort: { orders: orders }, ...param, reloadPage: false }))
 
   const [selectedRowKeys, setSelectedRowKeys] = useState(() => {})
+  const [selectedRows, setSelectedRows] = useState([])
   // { ...query, ...param }
-  const { data, loading, isError, request } = useFetch(Object.assign({}, query, param), fetcher, options)
+  const { data, loading, isError, request } = useFetch(Object.assign({}, query), fetcher, options)
   const onTableChange = useCallback((pagination, filters, sorter) => {
     const { current, pageSize } = pagination
     let sortParam = orders
@@ -23,8 +24,8 @@ const useTable = (param = {}, fetcher, options = {}, tableOptions = {}) => {
     dispatch({ type: 'TABLE_PAGINATION_CHANGE', defaultParams: { currentPage: current, pageSize, sort: { orders: [sortParam] } } })
   }, [])
 
-  const resetDefaultParams = useCallback(() => {
-    setQuery((prev) => ({ ...prev, currentPage: defaultParams.currentPage, pageSize: defaultParams.pageSize }))
+  const resetDefaultParams = useCallback((params) => {
+    setQuery((prev) => ({ ...prev, ...params, currentPage: defaultParams.currentPage, pageSize: defaultParams.pageSize }))
   }, [])
   // useEffect(() => {
   //   // setQuery(prev => ({ ...prev, currentPage: defaultParams.currentPage, pageSize: defaultParams.pageSize }))
@@ -38,8 +39,9 @@ const useTable = (param = {}, fetcher, options = {}, tableOptions = {}) => {
     //重载页面数据,new Date()表示每次参数不一致,会重新加载页面数据
     setQuery((prev) => ({ ...prev, reloadPage: new Date() }))
   }, [])
-  const rowSelectionChange = useCallback((selectedRowKeys) => {
+  const rowSelectionChange = useCallback((selectedRowKeys, selectedRows) => {
     setSelectedRowKeys(selectedRowKeys)
+    setSelectedRows(selectedRows)
   })
   let newData = data ? tableOptions.tableDataKey ? data[tableOptions.tableDataKey] : data : {}
   if(tableOptions.formatData) {
@@ -74,6 +76,7 @@ const useTable = (param = {}, fetcher, options = {}, tableOptions = {}) => {
     refresh,
     reloadPage,
     selectedRowKeys,
+    selectedRows,
     resetDefaultParams
   }
 }

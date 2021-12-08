@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import * as BaseUtils from '../../util/BaseUtils'
 
 const useFetch = (param, fetcher, options) => {
   const [loading, setLoading] = useState(false)
@@ -7,7 +8,8 @@ const useFetch = (param, fetcher, options) => {
   const request = useCallback(async() => {
     setLoading(true)
     try {
-      const { data } = await fetcher(param)
+      const requestParam = BaseUtils.filterNotNullObject(param)
+      const { data } = await fetcher(requestParam)
       options.onSuccess && options.onSuccess(data, param)
       // unstable_batchedUpdates(() => {
       setData(data)
